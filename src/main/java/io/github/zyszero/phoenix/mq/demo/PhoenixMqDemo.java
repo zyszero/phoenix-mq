@@ -20,8 +20,6 @@ public class PhoenixMqDemo {
         String topic = "phoenix.order";
 
         PhoenixBroker broker = new PhoenixBroker();
-        broker.createTopic(topic);
-
         PhoenixProducer producer = broker.createProducer();
         PhoenixConsumer<?> consumer = broker.createConsumer(topic);
         consumer.listen(message -> System.out.println("onMessage => " + message));
