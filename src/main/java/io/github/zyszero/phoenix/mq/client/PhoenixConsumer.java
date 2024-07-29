@@ -1,4 +1,8 @@
-package io.github.zyszero.phoenix.mq.core;
+package io.github.zyszero.phoenix.mq.client;
+
+import io.github.zyszero.phoenix.mq.model.PhoenixMessage;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * message consumer
@@ -8,14 +12,19 @@ package io.github.zyszero.phoenix.mq.core;
  */
 public class PhoenixConsumer<T> {
 
+    private String id;
+
     PhoenixBroker broker;
 
     String topic;
 
     PhoenixMq mq;
 
+    static AtomicInteger idGen = new AtomicInteger(0);
+
     public PhoenixConsumer(PhoenixBroker broker) {
         this.broker = broker;
+        this.id = "CID" + idGen.getAndIncrement();
     }
 
     public void subscribe(String topic) {

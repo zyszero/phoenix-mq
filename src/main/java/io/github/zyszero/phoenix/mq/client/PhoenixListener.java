@@ -1,4 +1,6 @@
-package io.github.zyszero.phoenix.mq.core;
+package io.github.zyszero.phoenix.mq.client;
+
+import io.github.zyszero.phoenix.mq.model.PhoenixMessage;
 
 /**
  * message listener

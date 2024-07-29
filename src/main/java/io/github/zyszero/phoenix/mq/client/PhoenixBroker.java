@@ -1,4 +1,4 @@
-package io.github.zyszero.phoenix.mq.core;
+package io.github.zyszero.phoenix.mq.client;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

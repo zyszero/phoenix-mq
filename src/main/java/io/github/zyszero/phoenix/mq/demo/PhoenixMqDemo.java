@@ -1,9 +1,9 @@
 package io.github.zyszero.phoenix.mq.demo;
 
-import io.github.zyszero.phoenix.mq.core.PhoenixBroker;
-import io.github.zyszero.phoenix.mq.core.PhoenixConsumer;
-import io.github.zyszero.phoenix.mq.core.PhoenixMessage;
-import io.github.zyszero.phoenix.mq.core.PhoenixProducer;
+import io.github.zyszero.phoenix.mq.client.PhoenixBroker;
+import io.github.zyszero.phoenix.mq.client.PhoenixConsumer;
+import io.github.zyszero.phoenix.mq.model.PhoenixMessage;
+import io.github.zyszero.phoenix.mq.client.PhoenixProducer;
 
 import java.io.IOException;
 

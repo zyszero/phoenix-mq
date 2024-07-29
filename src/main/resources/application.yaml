@@ -1,3 +1,6 @@
 spring:
   application:
     name: phoenix-mq
+
+server:
+  port: 8765
