@@ -1,8 +1,9 @@
 package io.github.zyszero.phoenix.mq.demo;
 
+import com.alibaba.fastjson.JSON;
 import io.github.zyszero.phoenix.mq.client.PhoenixBroker;
 import io.github.zyszero.phoenix.mq.client.PhoenixConsumer;
-import io.github.zyszero.phoenix.mq.model.PhoenixMessage;
+import io.github.zyszero.phoenix.mq.model.Message;
 import io.github.zyszero.phoenix.mq.client.PhoenixProducer;
 
 import java.io.IOException;
@@ -17,48 +18,59 @@ public class PhoenixMqDemo {
 
         long ids = 0;
 
-        String topic = "phoenix.order";
+        String topic = "io.github.zyszero.test";
 
-        PhoenixBroker broker = new PhoenixBroker();
+        PhoenixBroker broker = PhoenixBroker.getDefault();
         PhoenixProducer producer = broker.createProducer();
+//        PhoenixConsumer<?> consumer = broker.createConsumer(topic);
+//        consumer.sub(topic);
+
         PhoenixConsumer<?> consumer = broker.createConsumer(topic);
-        consumer.listen(message -> System.out.println("onMessage => " + message));
+        consumer.listen(topic, message -> {
+            System.out.println("onMessage => " + message); // 这里模拟处理消息
+        });
+//        consumer.sub(topic);
 
         for (int i = 0; i < 10; i++) {
             Order order = new Order(ids, "item" + ids, 100 * i);
-            producer.send(topic, new PhoenixMessage<>(ids++, order, null));
+            Message<String> message = new Message<>(ids++, JSON.toJSONString(order), null);
+            System.out.println(" ===>> send message: " + JSON.toJSONString(message));
+            producer.send(topic, message);
         }
 
 
         for (int i = 0; i < 10; i++) {
-            PhoenixMessage<Order> message = (PhoenixMessage<Order>) consumer.poll(1000);
-            System.out.println(message.getBody());
+            Message<Order> message = (Message<Order>) consumer.recv(topic);
+            System.out.println(message.getBody()); // 模拟业务处理
+            consumer.ack(topic, message);
         }
 
         while (true) {
             char c = (char) System.in.read();
 
             if (c == 'q' || c == 'e') {
+                consumer.unsub(topic);
                 break;
             }
 
             if (c == 'p') {
                 Order order = new Order(ids, "item" + ids, 100 * ids);
-                producer.send(topic, new PhoenixMessage<>(ids++, order, null));
-                System.out.println("send ok => " + order);
+                producer.send(topic, new Message<>(ids++, JSON.toJSONString(order), null));
+                System.out.println("produce ok => " + order);
             }
 
             if (c == 'c') {
-                PhoenixMessage<Order> message = (PhoenixMessage<Order>) consumer.poll(1000);
-                System.out.println("poll ok => " + message);
+                Message<Order> message = (Message<Order>) consumer.recv(topic);
+                System.out.println("consumer ok => " + message);
+                consumer.ack(topic, message);
             }
 
-            if (c == 'a') {
+            if (c == 'b') {
                 for (int i = 0; i < 10; i++) {
                     Order order = new Order(ids, "item" + ids, 100 * i);
-                    producer.send(topic, new PhoenixMessage<>(ids++, order, null));
+                    producer.send(topic, new Message<>(ids++, JSON.toJSONString(order), null));
                 }
-                System.out.println("send 10 orders...");
+                System.out.println("produce 10 orders...");
             }
         }
     }

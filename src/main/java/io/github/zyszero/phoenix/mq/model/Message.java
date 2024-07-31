@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -16,14 +17,14 @@ import java.util.concurrent.atomic.AtomicLong;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PhoenixMessage<T> {
+public class Message<T> {
 
     //    private String topic;
     static AtomicLong idGen = new AtomicLong(0);
 
     private Long id;
     private T body;
-    private Map<String, String> headers; // 系统属性， AMQ-version = 1.0 X-version = 1.0
+    private Map<String, String> headers = new HashMap<>(); // 系统属性， AMQ-version = 1.0 X-version = 1.0
 //    private Map<String, String> properties; // 业务属性
 
 
@@ -32,7 +33,7 @@ public class PhoenixMessage<T> {
     }
 
 
-    public static PhoenixMessage<String> create(String body, Map<String, String> headers) {
-        return new PhoenixMessage<>(getId(), body, headers);
+    public static Message<String> create(String body, Map<String, String> headers) {
+        return new Message<>(getId(), body, headers);
     }
 }

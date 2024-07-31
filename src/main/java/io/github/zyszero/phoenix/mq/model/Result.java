@@ -3,6 +3,8 @@ package io.github.zyszero.phoenix.mq.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * Result for MQServer
  *
@@ -12,6 +14,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Result<T> {
+
     /**
      * 状态码
      * success: 1
@@ -29,11 +32,19 @@ public class Result<T> {
         return new Result<>(1, message);
     }
 
-    public static Result<PhoenixMessage<?>> msg(String message) {
-        return new Result<>(1, PhoenixMessage.create(message, null));
+    public static Result<Message<?>> msg(String message) {
+        return new Result<>(1, Message.create(message, null));
     }
 
-    public static Result<PhoenixMessage<?>> msg(PhoenixMessage<?> message) {
+    public static Result<Message<?>> msg(Message<?> message) {
         return new Result<>(1, message);
+    }
+
+    public static Result<List<Message<?>>> msg(List<Message<?>> messages) {
+        return new Result<>(1, messages);
+    }
+
+    public boolean isSuccess() {
+        return code == 1;
     }
 }

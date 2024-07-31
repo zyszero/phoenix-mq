@@ -1,11 +1,10 @@
 package io.github.zyszero.phoenix.mq.server;
 
-import io.github.zyszero.phoenix.mq.model.PhoenixMessage;
+import io.github.zyszero.phoenix.mq.model.Message;
 import io.github.zyszero.phoenix.mq.model.Result;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * MQ Server
@@ -13,40 +12,45 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @Author: zyszero
  * @Date: 2024/7/30 5:16
  */
-@Controller
+@RestController
 @RequestMapping("/phoenix-mq")
 public class MQServer {
 
 
     // send
-    @RequestMapping("/send")
+    @PostMapping("/send")
     public Result<?> send(@RequestParam("topic") String topic,
-                          @RequestParam("cid") String consumerId,
-                          @RequestBody PhoenixMessage<String> message) {
-        ;
-        return Result.ok("" + MessageQueue.send(topic, consumerId, message));
+                          @RequestBody Message<String> message) {
+        return Result.ok("" + MessageQueue.send(topic, message));
     }
 
     // recv
-    @RequestMapping("/recv")
+    @GetMapping("/recv")
     public Result<?> recv(@RequestParam("topic") String topic,
                           @RequestParam("cid") String consumerId) {
         return Result.msg(MessageQueue.recv(topic, consumerId));
     }
 
+    @GetMapping("/batch")
+    public Result<List<Message<?>>> batch(@RequestParam("topic") String topic,
+                                         @RequestParam("cid") String consumerId,
+                                         @RequestParam(name = "size", required = false, defaultValue = "1000") int size) {
+        return Result.msg(MessageQueue.batch(topic, consumerId, size));
+    }
+
 
     // ack
-    @RequestMapping("/ack")
+    @GetMapping("/ack")
     public Result<?> ack(@RequestParam("topic") String topic,
                          @RequestParam("cid") String consumerId,
                          @RequestParam("offset") Integer offset) {
 
-        return Result.msg("" + MessageQueue.ack(topic, consumerId, offset));
+        return Result.ok("" + MessageQueue.ack(topic, consumerId, offset));
     }
 
 
     // 1. sub
-    @RequestMapping("/sub")
+    @GetMapping("/sub")
     public Result<String> subscribe(@RequestParam("topic") String topic,
                                     @RequestParam("cid") String consumerId) {
         // 订阅
@@ -56,7 +60,7 @@ public class MQServer {
 
 
     // unsub
-    @RequestMapping("/unsub")
+    @GetMapping("/unsub")
     public Result<String> unsubscribe(@RequestParam("topic") String topic,
                                       @RequestParam("cid") String consumerId) {
         // 取消订阅

@@ -1,0 +1,20 @@
+### sub
+GET http://localhost:8765/phoenix-mq/sub?topic=io.github.zyszero.test&cid=zyszero
+
+### send
+POST http://localhost:8765/phoenix-mq/send?topic=io.github.zyszero.test&cid=zyszero
+Content-Type: application/json
+
+{
+  "body": "{\"id\":0,\"item\":\"item0\",\"price\":0.0}"
+}
+
+
+### recv
+GET http://localhost:8765/phoenix-mq/recv?topic=io.github.zyszero.test&cid=zyszero
+
+
+### ack
+GET http://localhost:8765/phoenix-mq/ack?topic=io.github.zyszero.test&cid=zyszero&offset=0
+
+

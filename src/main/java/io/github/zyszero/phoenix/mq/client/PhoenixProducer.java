@@ -1,10 +1,10 @@
 package io.github.zyszero.phoenix.mq.client;
 
-import io.github.zyszero.phoenix.mq.model.PhoenixMessage;
+import io.github.zyszero.phoenix.mq.model.Message;
 import lombok.AllArgsConstructor;
 
 /**
- * message producer
+ * message queue producer
  *
  * @Author: zyszero
  * @Date: 2024/7/24 22:08
@@ -14,14 +14,7 @@ public class PhoenixProducer {
 
     PhoenixBroker broker;
 
-    public boolean send(String topic, PhoenixMessage message) {
-
-        PhoenixMq mq = broker.find(topic);
-
-        if (mq == null) {
-            throw new RuntimeException("topic not found");
-        }
-
-        return mq.send(message);
+    public boolean send(String topic, Message<?> message) {
+        return broker.send(topic, message);
     }
 }

@@ -1,6 +1,7 @@
 package io.github.zyszero.phoenix.mq.client;
 
-import io.github.zyszero.phoenix.mq.model.PhoenixMessage;
+
+import io.github.zyszero.phoenix.mq.model.Message;
 
 /**
  * message listener
@@ -10,5 +11,5 @@ import io.github.zyszero.phoenix.mq.model.PhoenixMessage;
  */
 public interface PhoenixListener<T> {
 
-    void onMessage(PhoenixMessage<T> message);
+    void onMessage(Message<T> message);
 }

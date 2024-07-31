@@ -1,6 +1,7 @@
 package io.github.zyszero.phoenix.mq.client;
 
-import io.github.zyszero.phoenix.mq.model.PhoenixMessage;
+import io.github.zyszero.phoenix.mq.model.Message;
+import lombok.Data;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -10,15 +11,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Author: zyszero
  * @Date: 2024/7/24 22:19
  */
+@Data
 public class PhoenixConsumer<T> {
 
     private String id;
 
+    private PhoenixListener listener;
+
     PhoenixBroker broker;
 
-    String topic;
-
-    PhoenixMq mq;
 
     static AtomicInteger idGen = new AtomicInteger(0);
 
@@ -27,21 +28,29 @@ public class PhoenixConsumer<T> {
         this.id = "CID" + idGen.getAndIncrement();
     }
 
-    public void subscribe(String topic) {
-        this.topic = topic;
-        PhoenixMq mq = broker.find(topic);
-        if (mq == null) {
-            throw new RuntimeException("topic not found");
+    public void sub(String topic) {
+        this.broker.sub(topic, id);
+    }
+
+    public void unsub(String topic) {
+        this.broker.unsub(topic, id);
+    }
+
+    public Message<T> recv(String topic) {
+        return broker.recv(topic, id);
+    }
+
+
+    public void ack(String topic, Message<?> message) {
+        if (message == null) {
+            return;
         }
-        this.mq = mq;
+        int offset = Integer.parseInt(message.getHeaders().get("X-offset"));
+        this.broker.ack(topic, id, offset);
     }
 
-    public PhoenixMessage<T> poll(long timeout) {
-        return mq.poll(timeout);
-    }
-
-
-    public void listen(PhoenixListener<T> listener) {
-        mq.addListener(listener);
+    public void listen(String topic, PhoenixListener<T> listener) {
+        this.listener = listener;
+        broker.addConsumer(topic, this);
     }
 }

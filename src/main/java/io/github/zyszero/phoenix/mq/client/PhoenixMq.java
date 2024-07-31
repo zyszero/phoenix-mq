@@ -1,6 +1,6 @@
 package io.github.zyszero.phoenix.mq.client;
 
-import io.github.zyszero.phoenix.mq.model.PhoenixMessage;
+import io.github.zyszero.phoenix.mq.model.Message;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 
@@ -23,11 +23,11 @@ public class PhoenixMq {
     }
 
     private String topic;
-    private LinkedBlockingQueue<PhoenixMessage> queues = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<Message> queues = new LinkedBlockingQueue<>();
 
     private List<PhoenixListener> listeners = new ArrayList<>();
 
-    public boolean send(PhoenixMessage message) {
+    public boolean send(Message message) {
         boolean offer = queues.offer(message);
         listeners.forEach(listener -> listener.onMessage(message));
         return offer;
@@ -42,7 +42,7 @@ public class PhoenixMq {
      * @return
      */
     @SneakyThrows
-    public <T> PhoenixMessage<T> poll(long timeout) {
+    public <T> Message<T> poll(long timeout) {
         return queues.poll(timeout, TimeUnit.MILLISECONDS);
     }
 
