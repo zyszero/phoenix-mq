@@ -26,15 +26,15 @@ public class MQServer {
 
     // recv
     @GetMapping("/recv")
-    public Result<?> recv(@RequestParam("topic") String topic,
-                          @RequestParam("cid") String consumerId) {
+    public Result<Message<?>> recv(@RequestParam("topic") String topic,
+                                   @RequestParam("cid") String consumerId) {
         return Result.msg(MessageQueue.recv(topic, consumerId));
     }
 
     @GetMapping("/batch")
     public Result<List<Message<?>>> batch(@RequestParam("topic") String topic,
-                                         @RequestParam("cid") String consumerId,
-                                         @RequestParam(name = "size", required = false, defaultValue = "1000") int size) {
+                                          @RequestParam("cid") String consumerId,
+                                          @RequestParam(name = "size", required = false, defaultValue = "1000") int size) {
         return Result.msg(MessageQueue.batch(topic, consumerId, size));
     }
 

@@ -41,7 +41,9 @@ public class PhoenixMqDemo {
 
         for (int i = 0; i < 10; i++) {
             Message<Order> message = (Message<Order>) consumer.recv(topic);
-            System.out.println(message.getBody()); // 模拟业务处理
+            if (message != null){
+                System.out.println(message.getBody()); // 模拟业务处理
+            }
             consumer.ack(topic, message);
         }
 
